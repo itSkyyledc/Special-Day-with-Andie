@@ -1,0 +1,23 @@
+{
+  "name": "magical-date-itinerary",
+  "version": "1.0.0",
+  "description": "A magical fairy tale-style date itinerary website",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "start": "vercel dev"
+  },
+  "keywords": [
+    "date",
+    "itinerary", 
+    "fairy-tale",
+    "romantic",
+    "website"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}

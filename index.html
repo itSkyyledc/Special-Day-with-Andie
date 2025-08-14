@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Magical Day Together ✨</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="fairy-lights"></div>
+    <div class="magical-clouds"></div>
+    <div class="aurora-lights"></div>
+    
+    <div class="book-container">
+        <div class="book-cover">
+            <div class="book-content">
+                <h1 class="main-title">✨ Our Enchanted Adventure ✨</h1>
+                <div class="subtitle">Once upon a time, two hearts began a magical journey...</div>
+                <div class="cute-characters">
+                    <span class="princess">👸🏻</span>
+                    <span class="heart-float">💕</span>
+                    <span class="prince">🤴🏻</span>
+                </div>
+                <button class="open-book-btn" onclick="openBook()">🌟 Open Our Storybook 🌟</button>
+            </div>
+        </div>
+
+        <div class="book-pages" id="bookPages">
+            <div class="page page-1">
+                <div class="page-header">
+                    <h2>🌅 Chapter 1: Our Magical Morning 🌅</h2>
+                    <div class="time-badge">🕙 10:30 AM - When dreams come true</div>
+                </div>
+                
+                <div class="activity-card" onclick="showPopup('brunch')">
+                    <div class="activity-icon">🥐</div>
+                    <h3>🌸 Enchanted Morning Feast 🌸</h3>
+                    <p>In a cozy castle where yummy treats await our royal hearts...</p>
+                    <div class="sparkle-effect"></div>
+                </div>
+
+                <div class="activity-card" onclick="showPopup('activity1')">
+                    <div class="activity-icon">🧚‍♀️</div>
+                    <h3>✨ [Magical Activity 1] ✨</h3>
+                    <p>A whimsical adventure where pixie dust makes everything perfect...</p>
+                    <div class="sparkle-effect"></div>
+                </div>
+            </div>
+
+            <div class="page page-2">
+                <div class="page-header">
+                    <h2>🌺 Chapter 2: Afternoon Enchantments 🌺</h2>
+                    <div class="time-badge">🕐 1:00 PM - 4:00 PM - Adventures in wonderland</div>
+                </div>
+                
+                <div class="activity-card" onclick="showPopup('activity2')">
+                    <div class="activity-icon">🌺</div>
+                    <h3>💆‍♀️ [Dreamy Relaxation Time] 💆‍♀️</h3>
+                    <p>Where gentle fairies help us feel like royalty in a magical spa...</p>
+                    <div class="sparkle-effect"></div>
+                </div>
+
+                <div class="activity-card" onclick="showPopup('activity3')">
+                    <div class="activity-icon">🎮</div>
+                    <h3>🎲 [Playful Games & Giggles] 🎲</h3>
+                    <p>In a cozy kingdom where laughter fills the air and games bring joy...</p>
+                    <div class="sparkle-effect"></div>
+                </div>
+            </div>
+
+            <div class="page page-3">
+                <div class="page-header">
+                    <h2>🌙 Chapter 3: The Grand Royal Finale 🌙</h2>
+                    <div class="time-badge">🕕 6:00 PM - 8:00 PM - When dreams become reality</div>
+                </div>
+                
+                <div class="activity-card special-dinner" onclick="showPopup('dinner')">
+                    <div class="activity-icon">🏰</div>
+                    <h3>🍽️ Royal Feast in the Castle 🍽️</h3>
+                    <p>In a magical dining hall where fairy tale moments come to life...</p>
+                    <div class="sparkle-effect"></div>
+                </div>
+
+                <div class="activity-card surprise-card" onclick="showPopup('surprise')">
+                    <div class="activity-icon">🎁</div>
+                    <h3>🌟 A Magical Secret 🌟</h3>
+                    <p>Shhh... some enchantments must unfold when the time is just right...</p>
+                    <div class="sparkle-effect"></div>
+                </div>
+            </div>
+
+            <div class="page-navigation">
+                <button class="nav-btn" onclick="previousPage()">🌸 Previous Chapter</button>
+                <span class="page-indicator" id="pageIndicator">📖 Page 1 of 3</span>
+                <button class="nav-btn" onclick="nextPage()">Next Chapter 🌸</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" id="popupOverlay" onclick="closePopup()">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closePopup()">×</button>
+            <div class="popup-header">
+                <h3 id="popupTitle"></h3>
+            </div>
+            <div class="popup-body">
+                <div class="popup-icon" id="popupIcon"></div>
+                <div class="popup-details" id="popupDetails"></div>
+                <div class="popup-time" id="popupTime"></div>
+                <div class="popup-description" id="popupDescription"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
