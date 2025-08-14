@@ -208,6 +208,28 @@ document.head.appendChild(style);
 
 // Simple mobile-friendly animations (no scrolling parallax)
 
+// Relationship Timer Function
+function updateRelationshipTimer() {
+    // Set your relationship start date here (August 15th, 2024 - adjust year as needed)
+    const startDate = new Date('2025-08-15T00:00:00');
+    const now = new Date();
+    
+    // Calculate the difference in milliseconds
+    const diffMs = now - startDate;
+    
+    // Convert to different time units
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+    
+    // Update the display
+    document.getElementById('days').textContent = days;
+    document.getElementById('hours').textContent = hours;
+    document.getElementById('minutes').textContent = minutes;
+    document.getElementById('seconds').textContent = seconds;
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     // Add a magical loading effect
@@ -216,6 +238,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.transition = 'opacity 1s ease-in-out';
         document.body.style.opacity = '1';
     }, 100);
+    
+    // Start the relationship timer
+    updateRelationshipTimer();
+    setInterval(updateRelationshipTimer, 1000); // Update every second
     
     // No parallax needed for single-page mobile experience
     
