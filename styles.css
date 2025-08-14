@@ -598,6 +598,8 @@ body::after {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .activity-photo-placeholder:hover {

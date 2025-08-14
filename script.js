@@ -239,19 +239,30 @@ function setupPhotoUploads() {
     const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
     
     photoPlaceholders.forEach(placeholder => {
-        placeholder.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent triggering the activity card popup
-            
-            // If photo already exists, show fullscreen on single click
-            if (placeholder.classList.contains('has-photo')) {
-                showFullscreen(placeholder);
-                return;
-            }
-            
-            // No photo exists, trigger upload
-            triggerPhotoUpload(placeholder);
-        });
+        // Remove any existing click listeners
+        placeholder.removeEventListener('click', handlePhotoClick);
+        
+        // Add new click listener with proper event handling
+        placeholder.addEventListener('click', handlePhotoClick);
     });
+}
+
+function handlePhotoClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    
+    const placeholder = e.currentTarget;
+    
+    // If photo already exists, show fullscreen on single click
+    if (placeholder.classList.contains('has-photo')) {
+        showFullscreen(placeholder);
+        return false;
+    }
+    
+    // No photo exists, trigger upload
+    triggerPhotoUpload(placeholder);
+    return false;
 }
 
 function triggerPhotoUpload(placeholder) {
