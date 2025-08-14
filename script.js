@@ -5,39 +5,39 @@ const totalPages = 3;
 // Activity data with placeholders
 const activityData = {
     brunch: {
-        title: "🌸 Enchanted Morning Feast 🌸",
+        title: "☕ Coffee Project Castle ☕",
         icon: "🥐",
-        time: "🕙 10:30 AM - 11:45 AM ✨",
-        details: "Our fairy tale begins in a cozy castle where the most delicious treats await! Like Belle and Beast's magical breakfast, we'll share yummy food and sweet conversations to start our enchanted day together! 🏰💕",
-        description: "Just like in the movies, every great love story starts with a perfect meal shared between two hearts! ✨ Customize with your magical brunch location details!"
+        time: "🕙 12:00 PM - 1:30 PM ✨",
+        details: "Our fairy tale begins at Coffee Project! Like Belle and Beast's magical breakfast, we'll share delicious brunch treats and sweet conversations in this cozy, romantic setting. Perfect timing to start our enchanted day together! (Backup: Cafe Roo if you prefer!) 🏰💕",
+        description: "Coffee Project offers the most magical brunch experience - from their signature coffee and pastries to cozy atmosphere, every moment feels like dining in a fairy tale castle! ✨"
     },
     activity1: {
-        title: "✨ [Magical Activity 1] ✨",
-        icon: "🧚‍♀️",
-        time: "🕐 [Time] - When fairy magic happens ✨",
-        details: "Like Cinderella getting ready for the ball, we'll experience something truly magical together! Pixie dust and wonderful moments await us in this enchanted adventure! 🧚‍♀️💫",
-        description: "Every Disney princess has her special moment - this will be one of ours! ✨ Replace with your chosen magical activity details!"
+        title: "🎬 Cinema76 Movie Kingdom 🎬",
+        icon: "🎭",
+        time: "🕐 2:00 PM - 4:10 PM ✨",
+        details: "Like Cinderella at the royal ball, we'll enjoy a magical movie experience at Cinema76! In our cozy theater kingdom, we'll share popcorn, hold hands, and create beautiful memories watching stories unfold on the big screen! 🏰✨",
+        description: "Cinema76 offers the most magical movie experience - with comfortable seats and great films, we'll have the perfect fairy tale afternoon being entertained together! 💫"
     },
     activity2: {
-        title: "💆‍♀️ [Dreamy Relaxation Time] 💆‍♀️",
+        title: "💆‍♀️ Massage 💆‍♀️",
         icon: "🌺",
-        time: "🕐 [Time] - Royal pampering session 👑",
-        details: "Just like Rapunzel in her tower, we'll be pampered like royalty! Gentle hands will help us feel like the prince and princess we are, relaxing in our own magical spa kingdom! 🏰✨",
-        description: "Even fairy tale characters need their beauty rest! This is our royal spa time together! 💅👑"
+        time: "🕐 4:10 PM - 5:00 PM 👑",
+        details: "Just like Rapunzel in her tower, we'll be pampered like royalty at our magical spa! Gentle hands will help us feel like the prince and princess we are, relaxing in our own royal sanctuary after our movie adventure! 🏰✨",
+        description: "Our spa sanctuary offers the most magical massage experience - perfect relaxation and pampering to prepare us for our grand finale dinner! 💫👑"
     },
-    activity3: {
-        title: "🎲 [Playful Games & Giggles] 🎲",
-        icon: "🎮",
-        time: "🕐 [Time] - Fun in the kingdom! 🏰",
-        details: "Like Alice's mad tea party, we'll play games and laugh until our cheeks hurt! In our cozy little kingdom, every game becomes an adventure and every giggle becomes a treasured memory! 🎭💕",
-        description: "The best Disney moments are filled with laughter and joy - just like this will be! 🎉✨"
+    caferoo: {
+        title: "🌸 Cafe Roo Alternative 🌸",
+        icon: "☕",
+        time: "🕐 12:00 PM - 1:30 PM ✨",
+        details: "Like Belle and Beast's magical breakfast, we can start our fairy tale at Cafe Roo if you'd prefer to start a little later! This cozy castle offers the perfect romantic setting to begin our enchanted day together with delicious treats and sweet conversations! 🏰💕",
+        description: "Cafe Roo offers a magical brunch experience - their cozy atmosphere and delicious menu make it the perfect alternative if you want to start our adventure at noon! ✨"
     },
     dinner: {
-        title: "🍽️ Royal Feast in the Castle 🍽️",
+        title: "🍽️ Royal Feast at Wildflour Castle 🍽️",
         icon: "🏰",
-        time: "🕕 6:00 PM - 7:30 PM - When dreams come true ✨",
-        details: "Like Belle's enchanted dinner with Beast, we'll dine in a magical castle where fairy tale moments come to life! The most delicious feast awaits us, and who knows what magical surprises the evening might bring... 🌹👑",
-        description: "Every Disney love story has that perfect dinner scene - this is ours! Customize with your royal dining location! 🏰✨"
+        time: "🕕 6:00 PM - 8:00 PM - When dreams come true ✨",
+        details: "Like Belle's enchanted dinner with Beast, we'll dine in the magical Wildflour Tomas Morato where fairy tale moments come to life! Their signature pasta, risotto, and desserts await us, and who knows what magical surprises the evening might bring... 🌹👑",
+        description: "Wildflour Tomas Morato is the perfect fairy tale setting - their cozy atmosphere and delicious Italian cuisine will make this dinner feel like we're dining in a storybook castle! This is where our magical moment will unfold... 🏰✨"
     },
     surprise: {
         title: "🌟 A Magical Secret 🌟",
@@ -210,8 +210,12 @@ document.head.appendChild(style);
 
 // Relationship Timer Function
 function updateRelationshipTimer() {
-    // Set your relationship start date here (August 15th, 2024 - adjust year as needed)
-    const startDate = new Date('2025-08-15T00:00:00');
+    // Set your relationship start date here - customize this to your exact moment!
+    // Format: 'YYYY-MM-DDTHH:MM:SS' (24-hour format)
+    // Examples:
+    // '2024-08-15T14:30:00' = August 15th, 2024 at 2:30 PM
+    // '2024-08-15T20:45:00' = August 15th, 2024 at 8:45 PM
+    const startDate = new Date('2024-08-15T00:00:00'); // ← CHANGE THIS TO YOUR EXACT TIME!
     const now = new Date();
     
     // Calculate the difference in milliseconds
@@ -230,6 +234,137 @@ function updateRelationshipTimer() {
     document.getElementById('seconds').textContent = seconds;
 }
 
+// Photo upload functionality
+function setupPhotoUploads() {
+    const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
+    
+    photoPlaceholders.forEach(placeholder => {
+        placeholder.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent triggering the activity card popup
+            
+            // If photo already exists, show fullscreen on single click
+            if (placeholder.classList.contains('has-photo')) {
+                showFullscreen(placeholder);
+                return;
+            }
+            
+            // No photo exists, trigger upload
+            triggerPhotoUpload(placeholder);
+        });
+    });
+}
+
+function triggerPhotoUpload(placeholder) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.style.display = 'none';
+    
+    input.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageUrl = e.target.result;
+                
+                // Set the background image
+                placeholder.style.backgroundImage = `url(${imageUrl})`;
+                placeholder.classList.add('has-photo');
+                
+                // Update the upload text
+                const uploadText = placeholder.querySelector('.upload-text');
+                if (uploadText) {
+                    uploadText.textContent = 'Tap to view';
+                }
+                
+                // Store the image in localStorage for persistence
+                const photoId = placeholder.id;
+                localStorage.setItem(photoId, imageUrl);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    document.body.appendChild(input);
+    input.click();
+    document.body.removeChild(input);
+}
+
+// Load saved photos from localStorage
+function loadSavedPhotos() {
+    const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
+    
+    photoPlaceholders.forEach(placeholder => {
+        const photoId = placeholder.id;
+        const savedPhoto = localStorage.getItem(photoId);
+        
+        if (savedPhoto) {
+            placeholder.style.backgroundImage = `url(${savedPhoto})`;
+            placeholder.classList.add('has-photo');
+            
+            const uploadText = placeholder.querySelector('.upload-text');
+            if (uploadText) {
+                uploadText.textContent = 'Tap to view';
+            }
+        }
+    });
+}
+
+// Fullscreen functionality
+let currentPlaceholder = null;
+
+function showFullscreen(placeholder) {
+    const modal = document.getElementById('fullscreenModal');
+    const image = document.getElementById('fullscreenImage');
+    const info = document.getElementById('fullscreenInfo');
+    
+    // Store reference to current placeholder
+    currentPlaceholder = placeholder;
+    
+    // Get the image URL from the placeholder's background
+    const backgroundImage = placeholder.style.backgroundImage;
+    const imageUrl = backgroundImage.slice(5, -2); // Remove 'url("' and '")'
+    
+    // Set the image source
+    image.src = imageUrl;
+    
+    // Set the info text based on the activity
+    const activityTitle = placeholder.closest('.activity-card').querySelector('h3').textContent;
+    info.textContent = `✨ ${activityTitle} Memory ✨`;
+    
+    // Show the modal
+    modal.classList.add('active');
+    
+    // Prevent body scrolling
+    document.body.style.overflow = 'hidden';
+}
+
+function closeFullscreen() {
+    const modal = document.getElementById('fullscreenModal');
+    modal.classList.remove('active');
+    
+    // Clear current placeholder reference
+    currentPlaceholder = null;
+    
+    // Restore body scrolling
+    document.body.style.overflow = '';
+}
+
+// Change photo from fullscreen
+function changePhotoFromFullscreen() {
+    if (!currentPlaceholder) return;
+    
+    // Trigger photo upload for the current placeholder
+    triggerPhotoUpload(currentPlaceholder);
+}
+
+// Keyboard support for fullscreen
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeFullscreen();
+    }
+});
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     // Add a magical loading effect
@@ -242,6 +377,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Start the relationship timer
     updateRelationshipTimer();
     setInterval(updateRelationshipTimer, 1000); // Update every second
+    
+    // Setup photo upload functionality
+    setupPhotoUploads();
+    loadSavedPhotos();
     
     // No parallax needed for single-page mobile experience
     

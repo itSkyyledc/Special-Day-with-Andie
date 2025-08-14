@@ -16,16 +16,16 @@
     <div class="book-container">
         <div class="book-cover">
             <div class="book-content">
-                <div class="relationship-timer">
-                    <!-- <div class="timer-label">💕 Together for 💕</div> -->
+                 <div class="relationship-timer">
+                    <div class="timer-label">💕 Together for 💕</div>
                     <div class="timer-display" id="relationshipTimer">
                         <span class="time-unit"><span id="days">0</span><br><small>Days</small></span>
                         <span class="time-unit"><span id="hours">0</span><br><small>Hours</small></span>
                         <span class="time-unit"><span id="minutes">0</span><br><small>Minutes</small></span>
                         <span class="time-unit"><span id="seconds">0</span><br><small>Seconds</small></span>
                     </div>
-                    <!-- <div class="timer-subtitle">Since August 15th, when our story began... 💫</div> -->
-                </div>
+                    <div class="timer-subtitle">Since our story began... 💫</div>
+                </div> 
                 <h1 class="main-title">✨ Our Enchanted Adventure ✨</h1>
                 <div class="subtitle">Once upon a time, two hearts began a magical journey...</div>
                 <div class="cute-characters">
@@ -40,42 +40,66 @@
         <div class="book-pages" id="bookPages">
             <div class="page page-1">
                 <div class="page-header">
-                    <h2>🌅 Chapter 1: Our Magical Morning 🌅</h2>
-                    <div class="time-badge">🕙 10:30 AM - When dreams come true</div>
+                    <h2>🌅 Chapter 1: Our Magical Beginning 🌅</h2>
+                    <div class="time-badge">🕙 10:30 AM - When our story unfolds</div>
                 </div>
                 
                 <div class="activity-card" onclick="showPopup('brunch')">
-                    <div class="activity-icon">🥐</div>
-                    <h3>🌸 Enchanted Morning Feast 🌸</h3>
-                    <p>In a cozy castle where yummy treats await our royal hearts...</p>
+                    <div class="activity-photo-placeholder" id="photo-brunch">
+                        <div class="photo-upload-area">
+                            <span class="upload-icon">📷</span>
+                            <span class="upload-text">Add Our Memory</span>
+                        </div>
+                    </div>
+                    <div class="activity-icon">☕</div>
+                    <h3>☕ Coffee Project Castle ☕</h3>
+                    <p>Magical brunch in our cozy coffee kingdom...</p>
                     <div class="sparkle-effect"></div>
                 </div>
 
-                <div class="activity-card" onclick="showPopup('activity1')">
-                    <div class="activity-icon">🧚‍♀️</div>
-                    <h3>✨ [Magical Activity 1] ✨</h3>
-                    <p>A whimsical adventure where pixie dust makes everything perfect...</p>
+                <div class="activity-card" onclick="showPopup('caferoo')">
+                    <div class="activity-photo-placeholder" id="photo-caferoo">
+                        <div class="photo-upload-area">
+                            <span class="upload-icon">📷</span>
+                            <span class="upload-text">Add Our Memory</span>
+                        </div>
+                    </div>
+                    <div class="activity-icon">🌸</div>
+                    <h3>🌸 Cafe Roo Alternative 🌸</h3>
+                    <p>Alternative magical start if you prefer to begin at noon...</p>
                     <div class="sparkle-effect"></div>
                 </div>
             </div>
 
             <div class="page page-2">
                 <div class="page-header">
-                    <h2>🌺 Chapter 2: Afternoon Enchantments 🌺</h2>
-                    <div class="time-badge">🕐 1:00 PM - 4:00 PM - Adventures in wonderland</div>
+                    <h2>🌺 Chapter 2: Afternoon Adventures 🌺</h2>
+                    <div class="time-badge">🕐 2:00 PM - 5:00 PM - Magical experiences</div>
                 </div>
                 
-                <div class="activity-card" onclick="showPopup('activity2')">
-                    <div class="activity-icon">🌺</div>
-                    <h3>💆‍♀️ [Dreamy Relaxation Time] 💆‍♀️</h3>
-                    <p>Where gentle fairies help us feel like royalty in a magical spa...</p>
+                <div class="activity-card" onclick="showPopup('activity1')">
+                    <div class="activity-photo-placeholder" id="photo-movie">
+                        <div class="photo-upload-area">
+                            <span class="upload-icon">📷</span>
+                            <span class="upload-text">Add Our Memory</span>
+                        </div>
+                    </div>
+                    <div class="activity-icon">🎬</div>
+                    <h3>🎬 Cinema76 Movie Kingdom 🎬</h3>
+                    <p>Sharing magical stories on the big screen...</p>
                     <div class="sparkle-effect"></div>
                 </div>
 
-                <div class="activity-card" onclick="showPopup('activity3')">
-                    <div class="activity-icon">🎮</div>
-                    <h3>🎲 [Playful Games & Giggles] 🎲</h3>
-                    <p>In a cozy kingdom where laughter fills the air and games bring joy...</p>
+                <div class="activity-card" onclick="showPopup('activity2')">
+                    <div class="activity-photo-placeholder" id="photo-massage">
+                        <div class="photo-upload-area">
+                            <span class="upload-icon">📷</span>
+                            <span class="upload-text">Add Our Memory</span>
+                        </div>
+                    </div>
+                    <div class="activity-icon">💆‍♀️</div>
+                    <h3>💆‍♀️ Massage 💆‍♀️</h3>
+                    <p>Magical pampering in our royal spa kingdom...</p>
                     <div class="sparkle-effect"></div>
                 </div>
             </div>
@@ -87,13 +111,25 @@
                 </div>
                 
                 <div class="activity-card special-dinner" onclick="showPopup('dinner')">
+                    <div class="activity-photo-placeholder" id="photo-dinner">
+                        <div class="photo-upload-area">
+                            <span class="upload-icon">📷</span>
+                            <span class="upload-text">Add Our Memory</span>
+                        </div>
+                    </div>
                     <div class="activity-icon">🏰</div>
-                    <h3>🍽️ Royal Feast in the Castle 🍽️</h3>
+                    <h3>🍽️ Wildflour Castle Feast 🍽️</h3>
                     <p>In a magical dining hall where fairy tale moments come to life...</p>
                     <div class="sparkle-effect"></div>
                 </div>
 
                 <div class="activity-card surprise-card" onclick="showPopup('surprise')">
+                    <div class="activity-photo-placeholder" id="photo-surprise">
+                        <div class="photo-upload-area">
+                            <span class="upload-icon">📷</span>
+                            <span class="upload-text">Add Our Memory</span>
+                        </div>
+                    </div>
                     <div class="activity-icon">🎁</div>
                     <h3>🌟 A Magical Secret 🌟</h3>
                     <p>Shhh... some enchantments must unfold when the time is just right...</p>
@@ -123,6 +159,14 @@
                 <div class="popup-description" id="popupDescription"></div>
             </div>
         </div>
+    </div>
+
+    <!-- Fullscreen Image Modal -->
+    <div class="fullscreen-modal" id="fullscreenModal" onclick="closeFullscreen()">
+        <div class="fullscreen-close" onclick="closeFullscreen()">×</div>
+        <button class="fullscreen-change-photo" id="fullscreenChangeBtn" onclick="changePhotoFromFullscreen()" title="Change Photo">📷</button>
+        <img class="fullscreen-image" id="fullscreenImage" onclick="event.stopPropagation()" />
+        <div class="fullscreen-info" id="fullscreenInfo">✨ Our Magical Memory ✨</div>
     </div>
 
     <script src="script.js"></script>
