@@ -15,7 +15,7 @@
     "romantic",
     "website"
   ],
-  "author": "Your Name",
+  "author": "Kyle",
   "license": "MIT",
   "devDependencies": {
     "vercel": "^32.0.0"
