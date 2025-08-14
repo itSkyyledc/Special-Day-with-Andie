@@ -210,6 +210,17 @@ document.head.appendChild(style);
 
 // Relationship Timer Function
 function updateRelationshipTimer() {
+    // Check if timer elements exist (they might be commented out)
+    const daysElement = document.getElementById('days');
+    const hoursElement = document.getElementById('hours');
+    const minutesElement = document.getElementById('minutes');
+    const secondsElement = document.getElementById('seconds');
+    
+    // If timer elements don't exist, just return
+    if (!daysElement || !hoursElement || !minutesElement || !secondsElement) {
+        return;
+    }
+    
     // Set your relationship start date here - customize this to your exact moment!
     // Format: 'YYYY-MM-DDTHH:MM:SS' (24-hour format)
     // Examples:
@@ -228,10 +239,10 @@ function updateRelationshipTimer() {
     const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
     
     // Update the display
-    document.getElementById('days').textContent = days;
-    document.getElementById('hours').textContent = hours;
-    document.getElementById('minutes').textContent = minutes;
-    document.getElementById('seconds').textContent = seconds;
+    daysElement.textContent = days;
+    hoursElement.textContent = hours;
+    minutesElement.textContent = minutes;
+    secondsElement.textContent = seconds;
 }
 
 // Photo upload functionality
@@ -247,7 +258,33 @@ function setupPhotoUploads() {
     });
 }
 
+// Setup activity card clicks
+function setupActivityCards() {
+    const activityCards = document.querySelectorAll('.activity-card');
+    console.log('Setting up activity cards:', activityCards.length);
+    
+    activityCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            console.log('Activity card clicked:', e.target);
+            
+            // Check if click is on photo placeholder or its children
+            if (e.target.closest('.activity-photo-placeholder')) {
+                console.log('Photo area clicked, skipping popup');
+                return; // Let photo handler take care of it
+            }
+            
+            // Handle activity card popup
+            const activityKey = card.dataset.activity;
+            console.log('Activity key:', activityKey);
+            if (activityKey) {
+                showPopup(activityKey);
+            }
+        });
+    });
+}
+
 function handlePhotoClick(e) {
+    console.log('Photo placeholder clicked!');
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
@@ -256,11 +293,13 @@ function handlePhotoClick(e) {
     
     // If photo already exists, show fullscreen on single click
     if (placeholder.classList.contains('has-photo')) {
+        console.log('Photo exists, showing fullscreen');
         showFullscreen(placeholder);
         return false;
     }
     
     // No photo exists, trigger upload
+    console.log('No photo, triggering upload');
     triggerPhotoUpload(placeholder);
     return false;
 }
@@ -393,10 +432,13 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPhotoUploads();
     loadSavedPhotos();
     
+    // Setup activity card clicks
+    setupActivityCards();
+    
     // No parallax needed for single-page mobile experience
     
     // Add click sound effect (optional - you can remove this if you don't want sound)
-    const buttons = document.querySelectorAll('button, .activity-card');
+    const buttons = document.querySelectorAll('button');
     buttons.forEach(button => {
         button.addEventListener('click', () => {
             // You can add a subtle click sound here if desired
