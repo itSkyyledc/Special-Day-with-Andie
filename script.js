@@ -215,7 +215,7 @@ function updateRelationshipTimer() {
     // Examples:
     // '2024-08-15T14:30:00' = August 15th, 2024 at 2:30 PM
     // '2024-08-15T20:45:00' = August 15th, 2024 at 8:45 PM
-    const startDate = new Date('2024-08-15T00:00:00'); // ← CHANGE THIS TO YOUR EXACT TIME!
+    const startDate = new Date('2025-08-15T19:30:00'); // ← CHANGE THIS TO YOUR EXACT TIME!
     const now = new Date();
     
     // Calculate the difference in milliseconds
