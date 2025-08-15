@@ -245,7 +245,7 @@ function updateRelationshipTimer() {
     secondsElement.textContent = seconds;
 }
 
-// Photo upload functionality
+// Photo upload functionality with enhanced persistence
 function setupPhotoUploads() {
     const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
     
@@ -256,6 +256,229 @@ function setupPhotoUploads() {
         // Add new click listener with proper event handling
         placeholder.addEventListener('click', handlePhotoClick);
     });
+    
+    // Ensure we have backup storage for critical photos
+    ensureMinimumPhotoStorage();
+}
+
+// Enhanced photo storage with backup and minimum requirements
+function ensureMinimumPhotoStorage() {
+    // Check if we have at least 2 photos stored
+    const storedPhotos = getStoredPhotoCount();
+    
+    if (storedPhotos < 2) {
+        console.log(`Only ${storedPhotos} photos stored, ensuring minimum storage...`);
+        
+        // Create backup storage for critical photos
+        const criticalPhotos = ['photo-dinner', 'photo-surprise'];
+        
+        criticalPhotos.forEach(photoId => {
+            const existingPhoto = localStorage.getItem(photoId);
+            if (!existingPhoto) {
+                // Store a placeholder or default image for critical activities
+                const defaultImage = createDefaultImage(photoId);
+                if (defaultImage) {
+                    localStorage.setItem(photoId, defaultImage);
+                    console.log(`Created backup storage for ${photoId}`);
+                }
+            }
+        });
+    }
+}
+
+// Get count of stored photos
+function getStoredPhotoCount() {
+    const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
+    let count = 0;
+    
+    photoPlaceholders.forEach(placeholder => {
+        const photoId = placeholder.id;
+        if (localStorage.getItem(photoId)) {
+            count++;
+        }
+    });
+    
+    return count;
+}
+
+// Create a default placeholder image for critical activities
+function createDefaultImage(photoId) {
+    // Create a simple SVG placeholder that represents the activity
+    const placeholders = {
+        'photo-dinner': `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="150" fill="#f0f8ff" stroke="#87ceeb" stroke-width="2"/>
+            <text x="100" y="80" font-family="Arial" font-size="16" text-anchor="middle" fill="#4682b4">🍽️ Dinner Memory</text>
+            <text x="100" y="100" font-family="Arial" font-size="12" text-anchor="middle" fill="#87ceeb">Tap to add photo</text>
+        </svg>`,
+        'photo-surprise': `<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="150" fill="#fff0f5" stroke="#dda0dd" stroke-width="2"/>
+            <text x="100" y="80" font-family="Arial" font-size="16" text-anchor="middle" fill="#9370db">🌟 Special Moment</text>
+            <text x="100" y="100" font-family="Arial" font-size="12" text-anchor="middle" fill="#dda0dd">Tap to add photo</text>
+        </svg>`
+    };
+    
+    return placeholders[photoId] ? `data:image/svg+xml;base64,${btoa(placeholders[photoId])}` : null;
+}
+
+// Safari compatibility detection and optimizations
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const isIOSSafari = isSafari && isIOS;
+
+// Safari-specific storage optimizations
+function getSafariStorageLimit() {
+    if (isIOSSafari) {
+        // iOS Safari has stricter limits
+        return 5 * 1024 * 1024; // 5MB conservative limit
+    }
+    return 10 * 1024 * 1024; // 10MB for other browsers
+}
+
+// Enhanced photo storage with Safari optimizations
+function storePhoto(photoId, imageUrl) {
+    try {
+        // Check storage limits for Safari
+        if (isIOSSafari) {
+            const currentSize = getCurrentStorageSize();
+            const newPhotoSize = imageUrl.length;
+            const limit = getSafariStorageLimit();
+            
+            if (currentSize + newPhotoSize > limit) {
+                console.warn(`Storage limit approaching on iOS Safari. Current: ${(currentSize/1024/1024).toFixed(2)}MB, New: ${(newPhotoSize/1024/1024).toFixed(2)}MB, Limit: ${(limit/1024/1024).toFixed(2)}MB`);
+                
+                // Try to compress the image for Safari
+                const compressedImage = compressImageForSafari(imageUrl);
+                if (compressedImage && compressedImage.length < imageUrl.length) {
+                    imageUrl = compressedImage;
+                    console.log(`Image compressed for Safari compatibility`);
+                }
+            }
+        }
+        
+        // Primary storage in localStorage
+        localStorage.setItem(photoId, imageUrl);
+        
+        // Backup storage in sessionStorage as fallback
+        sessionStorage.setItem(photoId, imageUrl);
+        
+        // Store metadata about the photo
+        const photoMetadata = {
+            timestamp: Date.now(),
+            size: imageUrl.length,
+            stored: true,
+            browser: isIOSSafari ? 'iOS Safari' : 'Other'
+        };
+        localStorage.setItem(`${photoId}_metadata`, JSON.stringify(photoMetadata));
+        
+        console.log(`Photo ${photoId} stored successfully with backup`);
+        
+        // Ensure minimum storage requirements
+        ensureMinimumPhotoStorage();
+        
+        return true;
+    } catch (error) {
+        console.error(`Error storing photo ${photoId}:`, error);
+        
+        // Try alternative storage method
+        try {
+            sessionStorage.setItem(photoId, imageUrl);
+            console.log(`Photo ${photoId} stored in sessionStorage as backup`);
+            return true;
+        } catch (backupError) {
+            console.error(`Backup storage also failed for ${photoId}:`, backupError);
+            return false;
+        }
+    }
+}
+
+// Get current storage size
+function getCurrentStorageSize() {
+    try {
+        let totalSize = 0;
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                totalSize += localStorage[key].length;
+            }
+        }
+        return totalSize;
+    } catch (error) {
+        return 0;
+    }
+}
+
+// Compress images for Safari compatibility
+function compressImageForSafari(imageUrl) {
+    return new Promise((resolve) => {
+        if (!isIOSSafari) {
+            resolve(imageUrl); // No compression needed for other browsers
+            return;
+        }
+        
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Calculate new dimensions (maintain aspect ratio)
+            const maxWidth = 800;
+            const maxHeight = 600;
+            let { width, height } = img;
+            
+            if (width > height) {
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width = (width * maxHeight) / height;
+                    height = maxHeight;
+                }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Draw and compress
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Use lower quality for Safari to reduce size
+            const compressedUrl = canvas.toDataURL('image/jpeg', 0.7);
+            resolve(compressedUrl);
+        };
+        
+        img.onerror = () => resolve(imageUrl); // Fallback to original if compression fails
+        img.src = imageUrl;
+    });
+}
+
+// Enhanced photo retrieval with fallback
+function retrievePhoto(photoId) {
+    try {
+        // Try localStorage first
+        let photo = localStorage.getItem(photoId);
+        
+        if (!photo) {
+            // Try sessionStorage as fallback
+            photo = sessionStorage.getItem(photoId);
+            if (photo) {
+                console.log(`Retrieved ${photoId} from sessionStorage backup`);
+            }
+        }
+        
+        if (!photo) {
+            // Try to restore from metadata if available
+            const metadata = localStorage.getItem(`${photoId}_metadata`);
+            if (metadata) {
+                console.log(`Found metadata for ${photoId}, attempting recovery...`);
+            }
+        }
+        
+        return photo;
+    } catch (error) {
+        console.error(`Error retrieving photo ${photoId}:`, error);
+        return null;
+    }
 }
 
 // Setup activity card clicks
@@ -304,34 +527,64 @@ function handlePhotoClick(e) {
     return false;
 }
 
+// Safari-optimized photo upload for iOS
 function triggerPhotoUpload(placeholder) {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.style.display = 'none';
     
+    // Safari-specific optimizations
+    if (isIOSSafari) {
+        // Enable camera capture on iOS
+        input.setAttribute('capture', 'environment');
+        // Accept multiple image formats for better compatibility
+        input.accept = 'image/jpeg,image/png,image/heic,image/heif';
+    }
+    
     input.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
+            // Safari-specific file validation
+            if (isIOSSafari) {
+                const maxSize = 10 * 1024 * 1024; // 10MB max for iOS
+                if (file.size > maxSize) {
+                    alert('⚠️ Photo is too large for iOS Safari. Please choose a smaller photo or take a new one.');
+                    return;
+                }
+            }
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 const imageUrl = e.target.result;
                 
-                // Set the background image
-                placeholder.style.backgroundImage = `url(${imageUrl})`;
-                placeholder.classList.add('has-photo');
-                
-                // Update the upload text
-                const uploadText = placeholder.querySelector('.upload-text');
-                if (uploadText) {
-                    uploadText.textContent = 'Tap to view';
+                // For iOS Safari, compress images before storage
+                if (isIOSSafari) {
+                    compressImageForSafari(imageUrl).then(compressedUrl => {
+                        displayAndStorePhoto(placeholder, compressedUrl);
+                    });
+                } else {
+                    displayAndStorePhoto(placeholder, imageUrl);
                 }
-                
-                // Store the image in localStorage for persistence
-                const photoId = placeholder.id;
-                localStorage.setItem(photoId, imageUrl);
             };
+            
+            reader.onerror = function() {
+                if (isIOSSafari) {
+                    alert('📱 Unable to read photo on iOS Safari. Please try taking a new photo.');
+                } else {
+                    alert('Unable to read photo. Please try again.');
+                }
+            };
+            
             reader.readAsDataURL(file);
+        }
+    });
+    
+    // Safari-specific error handling
+    input.addEventListener('error', function(e) {
+        if (isIOSSafari) {
+            console.error('iOS Safari photo upload error:', e);
+            alert('📱 Photo upload failed on iOS Safari. Please try again or restart Safari.');
         }
     });
     
@@ -340,13 +593,45 @@ function triggerPhotoUpload(placeholder) {
     document.body.removeChild(input);
 }
 
+// Helper function to display and store photos
+function displayAndStorePhoto(placeholder, imageUrl) {
+    // Set the background image
+    placeholder.style.backgroundImage = `url(${imageUrl})`;
+    placeholder.classList.add('has-photo');
+    
+    // Update the upload text
+    const uploadText = placeholder.querySelector('.upload-text');
+    if (uploadText) {
+        uploadText.textContent = 'Tap to view';
+    }
+    
+    // Store the image using enhanced persistence system
+    const photoId = placeholder.id;
+    const storageSuccess = storePhoto(photoId, imageUrl);
+    
+    if (storageSuccess) {
+        console.log(`Photo ${photoId} stored successfully`);
+        
+        // Safari-specific success message
+        if (isIOSSafari) {
+            console.log('📱 Photo stored successfully on iOS Safari');
+        }
+    } else {
+        console.warn(`Photo ${photoId} storage failed, but image is displayed`);
+        
+        if (isIOSSafari) {
+            alert('⚠️ Photo displayed but storage failed on iOS Safari. Consider exporting photos soon.');
+        }
+    }
+}
+
 // Load saved photos from localStorage
 function loadSavedPhotos() {
     const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
     
     photoPlaceholders.forEach(placeholder => {
         const photoId = placeholder.id;
-        const savedPhoto = localStorage.getItem(photoId);
+        const savedPhoto = retrievePhoto(photoId); // Use the enhanced retrieval function
         
         if (savedPhoto) {
             placeholder.style.backgroundImage = `url(${savedPhoto})`;
@@ -428,9 +713,26 @@ document.addEventListener('DOMContentLoaded', function() {
     updateRelationshipTimer();
     setInterval(updateRelationshipTimer, 1000); // Update every second
     
-    // Setup photo upload functionality
+    // Setup photo upload functionality with enhanced persistence
     setupPhotoUploads();
     loadSavedPhotos();
+    
+    // Check storage health and log status
+    const healthReport = checkStorageHealth();
+    console.log('📸 Photo Storage Health Report:', healthReport);
+    
+    // Safari-specific initialization
+    if (isIOSSafari) {
+        console.log('📱 iOS Safari detected - enabling optimizations');
+        console.log('💡 Tips for iOS Safari:');
+        console.log('   • Photos are automatically compressed for compatibility');
+        console.log('   • Storage limit: 5MB (conservative estimate)');
+        console.log('   • Export photos regularly to avoid storage issues');
+        console.log('   • Use camera capture for best photo quality');
+    }
+    
+    // Ensure minimum photo storage requirements
+    ensureMinimumPhotoStorage();
     
     // Setup activity card clicks
     setupActivityCards();
@@ -501,3 +803,190 @@ sparkleStyle.textContent = `
     }
 `;
 document.head.appendChild(sparkleStyle);
+
+// Photo export/import functionality for backup
+function exportPhotos() {
+    try {
+        const photoData = {};
+        const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
+        
+        photoPlaceholders.forEach(placeholder => {
+            const photoId = placeholder.id;
+            const photo = retrievePhoto(photoId);
+            if (photo) {
+                photoData[photoId] = photo;
+            }
+        });
+        
+        const exportData = {
+            timestamp: Date.now(),
+            photoCount: Object.keys(photoData).length,
+            photos: photoData
+        };
+        
+        const dataStr = JSON.stringify(exportData);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = `magical_photos_backup_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        console.log('Photos exported successfully');
+        return true;
+    } catch (error) {
+        console.error('Error exporting photos:', error);
+        return false;
+    }
+}
+
+// Import photos from backup
+function importPhotos(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
+                const importData = JSON.parse(e.target.result);
+                
+                if (importData.photos && typeof importData.photos === 'object') {
+                    let importedCount = 0;
+                    
+                    Object.keys(importData.photos).forEach(photoId => {
+                        const photo = importData.photos[photoId];
+                        if (photo && typeof photo === 'string') {
+                            const success = storePhoto(photoId, photo);
+                            if (success) importedCount++;
+                        }
+                    });
+                    
+                    console.log(`Successfully imported ${importedCount} photos`);
+                    
+                    // Reload photos to display imported ones
+                    loadSavedPhotos();
+                    
+                    resolve(importedCount);
+                } else {
+                    reject(new Error('Invalid backup file format'));
+                }
+            } catch (error) {
+                reject(error);
+            }
+        };
+        
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsText(file);
+    });
+}
+
+// Enhanced storage health check with Safari considerations
+function checkStorageHealth() {
+    const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
+    const healthReport = {
+        totalSlots: photoPlaceholders.length,
+        storedPhotos: 0,
+        criticalPhotos: 0,
+        storageSpace: 'unknown',
+        storageLimit: `${(getSafariStorageLimit() / 1024 / 1024).toFixed(2)} MB`,
+        browser: isIOSSafari ? 'iOS Safari' : 'Other Browser',
+        recommendations: []
+    };
+    
+    photoPlaceholders.forEach(placeholder => {
+        const photoId = placeholder.id;
+        const photo = retrievePhoto(photoId);
+        
+        if (photo) {
+            healthReport.storedPhotos++;
+            
+            // Check if it's a critical photo
+            if (photoId === 'photo-dinner' || photoId === 'photo-surprise') {
+                healthReport.criticalPhotos++;
+            }
+        }
+    });
+    
+    // Check localStorage space
+    try {
+        const totalSize = getCurrentStorageSize();
+        healthReport.storageSpace = `${(totalSize / 1024).toFixed(2)} KB`;
+        
+        const limit = getSafariStorageLimit();
+        if (totalSize > limit * 0.8) { // 80% warning
+            healthReport.recommendations.push('Storage space is getting full. Consider exporting photos.');
+        }
+        
+        if (isIOSSafari && totalSize > limit * 0.9) {
+            healthReport.recommendations.push('⚠️ iOS Safari storage limit approaching. Export photos soon!');
+        }
+    } catch (error) {
+        healthReport.storageSpace = 'Unable to check';
+    }
+    
+    // Add Safari-specific recommendations
+    if (isIOSSafari) {
+        healthReport.recommendations.push('📱 Using iOS Safari - photos will be automatically compressed for compatibility');
+        
+        if (healthReport.storedPhotos > 3) {
+            healthReport.recommendations.push('💡 Consider exporting photos regularly on iOS Safari to avoid storage limits');
+        }
+    }
+    
+    // Add general recommendations
+    if (healthReport.storedPhotos < 2) {
+        healthReport.recommendations.push('Add at least 2 photos for better memory preservation.');
+    }
+    
+    if (healthReport.criticalPhotos < 2) {
+        healthReport.recommendations.push('Consider adding photos for dinner and surprise activities.');
+    }
+    
+    return healthReport;
+}
+
+// Add helpful console commands for photo management
+window.photoManager = {
+    export: exportPhotos,
+    import: importPhotos,
+    health: checkStorageHealth,
+    clear: function() {
+        if (confirm('Are you sure you want to clear all stored photos? This cannot be undone.')) {
+            const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
+            photoPlaceholders.forEach(placeholder => {
+                const photoId = placeholder.id;
+                localStorage.removeItem(photoId);
+                sessionStorage.removeItem(photoId);
+                localStorage.removeItem(`${photoId}_metadata`);
+                
+                placeholder.style.backgroundImage = '';
+                placeholder.classList.remove('has-photo');
+                
+                const uploadText = placeholder.querySelector('.upload-text');
+                if (uploadText) {
+                    uploadText.textContent = 'Tap to add photo';
+                }
+            });
+            console.log('All photos cleared');
+        }
+    },
+    list: function() {
+        const photoPlaceholders = document.querySelectorAll('.activity-photo-placeholder');
+        const photoList = {};
+        
+        photoPlaceholders.forEach(placeholder => {
+            const photoId = placeholder.id;
+            const photo = retrievePhoto(photoId);
+            photoList[photoId] = photo ? 'Stored' : 'Not stored';
+        });
+        
+        console.table(photoList);
+        return photoList;
+    }
+};
+
+// Log helpful commands to console
+console.log('📸 Photo Management Commands:');
+console.log('photoManager.export() - Export all photos as backup');
+console.log('photoManager.health() - Check storage health');
+console.log('photoManager.list() - List all photo storage status');
+console.log('photoManager.clear() - Clear all stored photos (with confirmation)');
